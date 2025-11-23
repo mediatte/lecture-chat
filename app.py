@@ -176,8 +176,13 @@ def generate_qr_code(data):
 
 # 메인 앱
 def main():
-    # URL 파라미터로 모드 결정
-    query_params = st.query_params
+    # URL 파라미터로 모드 결정 (Streamlit 버전 호환)
+    try:
+        # Streamlit 1.30.0+ 방식
+        query_params = st.query_params
+    except AttributeError:
+        # 이전 버전 방식
+        query_params = st.experimental_get_query_params()
     
     # 세션 상태 초기화
     if 'user_type' not in st.session_state:
@@ -190,7 +195,12 @@ def main():
     # URL에 session_id가 있으면 학생 모드
     if 'session' in query_params and not st.session_state.user_type:
         st.session_state.user_type = 'student'
-        st.session_state.session_id = query_params['session']
+        # 딕셔너리 또는 리스트 형태 처리
+        session_value = query_params.get('session', query_params.get('session', [None]))
+        if isinstance(session_value, list):
+            st.session_state.session_id = session_value[0] if session_value else None
+        else:
+            st.session_state.session_id = session_value
     
     # 모드 선택 또는 실행
     if not st.session_state.user_type:
