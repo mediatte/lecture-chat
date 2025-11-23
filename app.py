@@ -191,6 +191,8 @@ def main():
         st.session_state.username = None
     if 'session_id' not in st.session_state:
         st.session_state.session_id = None
+    if 'message_counter' not in st.session_state:
+        st.session_state.message_counter = 0
     
     # URL에 session_id가 있으면 학생 모드
     if 'session' in query_params and not st.session_state.user_type:
@@ -333,9 +335,10 @@ def show_instructor_interface():
             col1, col2 = st.columns([5, 1])
             
             with col1:
+                # 메시지 카운터를 key로 사용해서 전송 후 입력창 초기화
                 message_input = st.text_input(
                     "메시지 입력",
-                    key="instructor_message",
+                    key=f"instructor_message_{st.session_state.message_counter}",
                     placeholder="학생들에게 답변하세요...",
                     label_visibility="collapsed"
                 )
@@ -350,6 +353,8 @@ def show_instructor_interface():
                     message_input,
                     'instructor'
                 )
+                # 메시지 카운터 증가 (입력창 초기화)
+                st.session_state.message_counter += 1
                 st.rerun()
             
             # 자동 새로고침 (5초마다)
@@ -469,9 +474,10 @@ def show_student_interface():
     col1, col2 = st.columns([5, 1])
     
     with col1:
+        # 메시지 카운터를 key로 사용해서 전송 후 입력창 초기화
         message_input = st.text_input(
             "메시지 입력",
-            key="student_message",
+            key=f"student_message_{st.session_state.message_counter}",
             placeholder="질문이나 의견을 입력하세요...",
             label_visibility="collapsed"
         )
@@ -486,6 +492,8 @@ def show_student_interface():
             message_input,
             'student'
         )
+        # 메시지 카운터 증가 (입력창 초기화)
+        st.session_state.message_counter += 1
         st.rerun()
     
     # 자동 새로고침
