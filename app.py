@@ -10,6 +10,7 @@ from datetime import datetime
 import time
 import uuid
 import json
+import re
 from pathlib import Path
 
 # 페이지 설정
@@ -174,6 +175,18 @@ def generate_qr_code(data):
     buf.seek(0)
     return buf
 
+def linkify_text(text):
+    """텍스트에서 URL을 찾아 클릭 가능한 링크로 변환"""
+    # URL 패턴 (http://, https:// 로 시작하는 URL)
+    url_pattern = r'(https?://[^\s]+)'
+    
+    # URL을 HTML 링크로 변환
+    def replace_url(match):
+        url = match.group(0)
+        return f'<a href="{url}" target="_blank" style="color: #667eea; text-decoration: underline;">{url}</a>'
+    
+    return re.sub(url_pattern, replace_url, text)
+
 # 메인 앱
 def main():
     # URL 파라미터로 모드 결정 (Streamlit 버전 호환)
@@ -322,11 +335,13 @@ def show_instructor_interface():
                         else:
                             msg_time = datetime.fromisoformat(msg['timestamp']).strftime('%H:%M')
                             msg_class = 'instructor-message' if msg['type'] == 'instructor' else 'student-message'
+                            # 링크를 클릭 가능하게 변환
+                            message_with_links = linkify_text(msg['message'])
                             st.markdown(f"""
                             <div class="chat-message {msg_class}">
                                 <strong>{msg['username']}</strong> 
                                 <span style="color: #999; font-size: 12px;">{msg_time}</span>
-                                <div style="margin-top: 4px;">{msg['message']}</div>
+                                <div style="margin-top: 4px;">{message_with_links}</div>
                             </div>
                             """, unsafe_allow_html=True)
             
@@ -460,12 +475,14 @@ def show_student_interface():
                 is_mine = msg.get('username') == st.session_state.username
                 msg_class = 'instructor-message' if msg['type'] == 'instructor' else 'student-message'
                 display_name = '나' if is_mine else msg['username']
+                # 링크를 클릭 가능하게 변환
+                message_with_links = linkify_text(msg['message'])
                 
                 st.markdown(f"""
                 <div class="chat-message {msg_class}">
                     <strong>{display_name}</strong> 
                     <span style="color: #999; font-size: 12px;">{msg_time}</span>
-                    <div style="margin-top: 4px;">{msg['message']}</div>
+                    <div style="margin-top: 4px;">{message_with_links}</div>
                 </div>
                 """, unsafe_allow_html=True)
     
