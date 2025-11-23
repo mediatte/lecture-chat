@@ -373,12 +373,36 @@ def show_student_interface():
         </div>
         """, unsafe_allow_html=True)
         
-        username = st.text_input("이름 (닉네임)", placeholder="이름을 입력하세요")
+        st.markdown("### 참여 방법을 선택하세요")
         
-        if st.button("💬 채팅 참여", use_container_width=True) and username:
-            st.session_state.username = username
-            add_participant(st.session_state.session_id, username)
-            st.rerun()
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.markdown("#### 📝 이름으로 참여")
+            username = st.text_input("이름 (닉네임)", placeholder="이름을 입력하세요", key="username_input")
+            
+            if st.button("💬 이름으로 참여", use_container_width=True, type="primary") and username:
+                st.session_state.username = username
+                add_participant(st.session_state.session_id, username)
+                st.rerun()
+        
+        with col2:
+            st.markdown("#### 🎭 익명으로 참여")
+            st.info("익명으로 빠르게 참여할 수 있습니다")
+            
+            if st.button("🎭 익명 참여", use_container_width=True):
+                # 랜덤 익명 닉네임 생성
+                import random
+                adjectives = ['활발한', '조용한', '열정적인', '호기심많은', '친절한', '밝은', '성실한', '똑똑한']
+                animals = ['토끼', '고양이', '강아지', '판다', '코알라', '펭귄', '다람쥐', '햄스터']
+                anonymous_name = f"{random.choice(adjectives)} {random.choice(animals)}{random.randint(1, 99)}"
+                
+                st.session_state.username = anonymous_name
+                add_participant(st.session_state.session_id, anonymous_name)
+                st.rerun()
+        
+        st.markdown("---")
+        st.markdown("💡 **팁:** 익명 참여를 선택하면 랜덤 닉네임이 자동으로 생성됩니다")
         
         return
     
