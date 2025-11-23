@@ -272,7 +272,7 @@ def show_instructor_interface():
                 
                 # QR 코드 생성
                 st.markdown("### 📱 QR 코드")
-                app_url = st.secrets.get("APP_URL", "https://your-app.streamlit.app")
+                app_url = st.secrets.get("APP_URL", "https://lecture-chat.streamlit.app")
                 session_url = f"{app_url}?session={st.session_state.session_id}"
                 
                 qr_img = generate_qr_code(session_url)
