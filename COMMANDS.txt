@@ -1,0 +1,17 @@
+# 🚀 GitHub 업로드 명령어
+
+# 현재 위치 확인
+pwd
+
+# GitHub 저장소 만든 후, 아래 명령어 실행:
+# (YOUR_USERNAME을 실제 GitHub 사용자명으로 변경)
+
+git remote add origin https://github.com/YOUR_USERNAME/lecture-chat-streamlit.git
+git branch -M main
+git push -u origin main
+
+# 예시:
+# git remote add origin https://github.com/johndoe/lecture-chat-streamlit.git
+# git branch -M main
+# git push -u origin main
+
